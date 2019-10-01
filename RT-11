@@ -1,0 +1,66 @@
+enable
+configure terminal
+hostname RT-11
+banner motd "ACESSO APENAS PARA PESSOAS AUTORIZADAS"
+enable secret SenhadaEnable
+security passwords min-length 8
+login block-for 240 attempts 7 within 600
+username paulojunior privilege 15 secret paulojunior
+ip domain-name rede1.local
+crypto key generate rsa general-keys modulus 1024
+line console 0
+password SenhadaConsole
+login
+exec-timeout 5
+line vty 0 15
+transport input ssh
+login local
+exec-timeout 5
+exit
+service password-encryption
+interface g0/0
+no shutdown
+description CONEXAO COM SWITCH-CORE
+exit
+interface g0/0.10
+encapsulation dot1q 10
+ip address 172.16.1.1 255.255.255.128
+ip helper-address 172.16.1.133
+description SUBINTERFACE VLAN 10
+exit
+interface g0/0.20
+encapsulation dot1q 20
+ip address 172.16.0.1 255.255.255.0
+ip helper-address 172.16.1.133
+description SUBINTERFACE VLAN 20
+exit
+interface g0/0.100
+encapsulation dot1q 100
+ip address 172.16.1.129 255.255.255.240
+description SUBINTERFACE VLAN 100
+exit
+interface serial 0/0/0
+ip address 200.18.189.10 255.255.255.252
+description WAN3 - 200.18.189.8/30
+no shutdown
+exit
+interface serial 0/0/1
+ip address 200.18.189.5 255.255.255.252
+description WAN2 - 200.18.189.4/30
+no shutdown
+exit
+ip route 200.18.189.0 255.255.255.252 200.18.189.6
+ip route 200.18.189.0 255.255.255.252 200.18.189.9
+ip route 172.16.2.0 255.255.254.0 200.18.189.6
+ip route 172.16.2.0 255.255.254.0 200.18.189.9
+ip route 172.16.2.128 255.255.255.128 200.18.189.6
+ip route 172.16.2.128 255.255.255.128 200.18.189.9
+ip route 172.16.3.0 255.255.255.224 200.18.189.6
+ip route 172.16.3.0 255.255.255.224 200.18.189.9
+ip route 172.16.4.0 255.255.254.0 200.18.189.6
+ip route 172.16.4.0 255.255.254.0 200.18.189.9
+ip route 172.16.4.128 255.255.255.192 200.18.189.6
+ip route 172.16.4.128 255.255.255.192 200.18.189.9
+ip route 172.16.4.192 255.255.255.224 200.18.189.6
+ip route 172.16.4.192 255.255.255.224 200.18.189.9
+do wr
